@@ -4,7 +4,7 @@ import numpy as np
 from ddpg import DDPG
 import os
 import time
-
+os.environ['CUDA_VISIBLE_DEVICES'] = '2'
 # bit_rate, buffer_size, next_chunk_size, bandwidth_measurement(throughput and time), chunk_til_video_end
 S_INFO = 6
 S_LEN = 8  # take how many frames in the past
@@ -49,8 +49,10 @@ while True:
     if i % 100 == 0:
         print('Episode:', i, ' Reward: %.2f' %
           float(ep_reward / j), 'Explore: %.2f' % var, )
+    if i % 1000 == 0:
+        ddpg.save_model()
     if log_flag:
         ddpg.store_summaries(ep_reward / j, i)
         i += 1
-    var *= (1. - 1e-5)    # decay the action randomness
+    var *= (1. - 1e-4)    # decay the action randomness
 print('Running time: ', time.time() - t1)

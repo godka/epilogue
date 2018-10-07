@@ -19,12 +19,12 @@ import tflearn
 
 #####################  hyper parameters  ####################
 
-LR_A = 5e-6    # learning rate for actor
-LR_C = 5e-5    # learning rate for critic
+LR_A = 6e-6   # learning rate for actor
+LR_C = 1e-3    # learning rate for critic
 GAMMA = 0.99     # reward discount
 TAU = 0.01      # soft replacement
 MEMORY_CAPACITY = 10000
-BATCH_SIZE = 32
+BATCH_SIZE = 128
 
 S_INFO = 6
 S_LEN = 8  # take how many frames in the past
@@ -36,7 +36,8 @@ class DDPG(object):
     def __init__(self, a_dim, s_dim, a_bound,):
         self.memory = np.zeros((MEMORY_CAPACITY, s_dim * 2 + a_dim + 1), dtype=np.float32)
         self.pointer = 0
-        self.sess = tf.Session()
+        gpu_options = tf.GPUOptions(allow_growth=True)
+        self.sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options))
 
         self.a_dim, self.s_dim, self.a_bound = a_dim, s_dim, a_bound,
         self.S = tf.placeholder(tf.float32, [None, s_dim], 's')
@@ -200,3 +201,8 @@ class DDPG(object):
         })
         self.writer.add_summary(summary_str, epoch)
         self.writer.flush()
+    
+    def save_model(self):
+        saver = tf.train.Saver()
+        saver.save(self.sess, "models/model.ckpt")
+
