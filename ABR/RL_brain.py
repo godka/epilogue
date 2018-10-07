@@ -65,7 +65,9 @@ class DeepQNetwork:
             # tf.train.SummaryWriter soon be deprecated, use following
             tf.summary.FileWriter("logs/", self.sess.graph)
 
+        self.ops, self.vars = self.build_summaries()
         self.sess.run(tf.global_variables_initializer())
+        self.writer = tf.summary.FileWriter('./results', self.sess.graph)  # training monitor
         self.cost_his = []
 
     def _build_net(self):
@@ -237,3 +239,20 @@ class DeepQNetwork:
         plt.ylabel('Cost')
         plt.xlabel('training steps')
         plt.show()
+
+
+    def build_summaries(self):
+        eps_total_reward = tf.Variable(0.)
+        tf.summary.scalar("Eps_total_reward", eps_total_reward)
+        
+        summary_vars = eps_total_reward
+        summary_ops = tf.summary.merge_all()
+
+        return summary_ops, summary_vars
+    
+    def store_summaries(self, reward, epoch):
+        summary_str = self.sess.run(self.ops, feed_dict={
+                self.vars: reward
+        })
+        self.writer.add_summary(summary_str, epoch)
+        self.writer.flush()

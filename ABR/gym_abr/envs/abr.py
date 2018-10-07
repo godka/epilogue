@@ -75,18 +75,21 @@ class ABREnv(gym.Env):
         return
 
     def step(self, action):
-        RESEVOIR, CUSHION = action
-        #print RESEVOIR, CUSHION
-        #RESEVOIR, CUSHION = 5., 10.
-        if self.buffer_size < RESEVOIR:
-            bit_rate = 0
-        elif self.buffer_size >= RESEVOIR + CUSHION:
-            bit_rate = A_DIM - 1
-        else:
-            bit_rate = (A_DIM - 1) * (self.buffer_size -
-                                      RESEVOIR) / float(CUSHION)
+        if not isinstance(action, int):
+            RESEVOIR, CUSHION = action
+            #print RESEVOIR, CUSHION
+            #RESEVOIR, CUSHION = 5., 10.
+            if self.buffer_size < RESEVOIR:
+                bit_rate = 0
+            elif self.buffer_size >= RESEVOIR + CUSHION:
+                bit_rate = A_DIM - 1
+            else:
+                bit_rate = (A_DIM - 1) * (self.buffer_size -
+                                        RESEVOIR) / float(CUSHION)
 
-        bit_rate = int(bit_rate)
+            bit_rate = int(bit_rate)
+        else:
+            bit_rate = action
         # the action is from the last decision
         # this is to make the framework similar to the real
         delay, sleep_time, self.buffer_size, rebuf, \

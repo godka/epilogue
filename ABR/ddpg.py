@@ -19,8 +19,8 @@ import tflearn
 
 #####################  hyper parameters  ####################
 
-LR_A = 1e-4    # learning rate for actor
-LR_C = 1e-3    # learning rate for critic
+LR_A = 5e-6    # learning rate for actor
+LR_C = 5e-5    # learning rate for critic
 GAMMA = 0.99     # reward discount
 TAU = 0.01      # soft replacement
 MEMORY_CAPACITY = 10000
@@ -70,7 +70,9 @@ class DDPG(object):
         a_loss = - tf.reduce_mean(q)    # maximize the q
         self.atrain = tf.train.AdamOptimizer(LR_A).minimize(a_loss, var_list=self.ae_params)
 
+        self.ops, self.vars = self.build_summaries()
         self.sess.run(tf.global_variables_initializer())
+        self.writer = tf.summary.FileWriter('./results', self.sess.graph)  # training monitor
 
     def choose_action(self, s):
         return self.sess.run(self.a, {self.S: s})[0]
@@ -182,3 +184,19 @@ class DDPG(object):
             net = tflearn.fully_connected(net, FEATURE_NUM, activation='relu', trainable=trainable)
             net = tflearn.fully_connected(net, 1, activation='linear', trainable=trainable)
             return net
+
+    def build_summaries(self):
+        eps_total_reward = tf.Variable(0.)
+        tf.summary.scalar("Eps_total_reward", eps_total_reward)
+        
+        summary_vars = eps_total_reward
+        summary_ops = tf.summary.merge_all()
+
+        return summary_ops, summary_vars
+    
+    def store_summaries(self, reward, epoch):
+        summary_str = self.sess.run(self.ops, feed_dict={
+                self.vars: reward
+        })
+        self.writer.add_summary(summary_str, epoch)
+        self.writer.flush()
