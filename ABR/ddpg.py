@@ -19,9 +19,9 @@ import tflearn
 
 #####################  hyper parameters  ####################
 
-LR_A = 6e-6   # learning rate for actor
-LR_C = 1e-3    # learning rate for critic
-GAMMA = 0.99     # reward discount
+LR_A = 1e-6   # learning rate for actor
+LR_C = 1e-4    # learning rate for critic
+GAMMA = 0.9     # reward discount
 TAU = 0.01      # soft replacement
 MEMORY_CAPACITY = 10000
 BATCH_SIZE = 128
