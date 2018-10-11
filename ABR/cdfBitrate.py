@@ -39,7 +39,7 @@ def readlog(filename):
 plt.switch_backend('Agg')
 
 #better = mpimg.imread('better.eps')
-plt.rc('text', usetex=True)
+#plt.rc('text', usetex=True)
 plt.rc('font', family='times')
 plt.rcParams['axes.labelsize'] = 15
 plt.rcParams['axes.labelweight'] = 'bold'
