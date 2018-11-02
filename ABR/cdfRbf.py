@@ -42,6 +42,10 @@ plt.switch_backend('Agg')
 
 #better = mpimg.imread('better.eps')
 #plt.rc('text', usetex=True)
+try:
+    plt.rc('text', usetex=True)
+except:
+    pass
 plt.rc('font', family='times')
 plt.rcParams['axes.labelsize'] = 15
 plt.rcParams['axes.labelweight'] = 'bold'
